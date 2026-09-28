@@ -1,0 +1,19 @@
+{
+  "name": "eikaiwa-free-talk",
+  "version": "1.0.0",
+  "description": "日本人向けフリートーク英会話Webアプリ（ずんだもんボイス対応）",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "mobile": "node server.js --mobile"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "qrcode": "^1.5.4"
+  }
+}
