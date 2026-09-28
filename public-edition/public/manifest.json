@@ -1,0 +1,9 @@
+{
+  "name": "しゃべって英会話",
+  "short_name": "英会話",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f4f8f1",
+  "theme_color": "#4f9d36",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

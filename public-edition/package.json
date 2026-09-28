@@ -1,0 +1,15 @@
+{
+  "name": "eikaiwa-free-talk-public",
+  "version": "1.0.0",
+  "description": "日本人向けフリートーク英会話Webアプリ（公開版：無料LLM・ずんだもん・Kokoro）",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "public": "node server.js --tunnel"
+  },
+  "engines": { "node": ">=20.12" },
+  "dependencies": {
+    "qrcode": "^1.5.4"
+  }
+}
