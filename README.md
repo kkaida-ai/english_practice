@@ -6,6 +6,8 @@
 
 このリポジトリには、使い方の違う2つのバージョンがあります。
 
+> **友達に使ってもらう・自分以外の人が使う場合は [公開版（`public-edition/`）](public-edition/README.md) を使ってください。** Claude Pro などの有料プランがなくても、無料の会話AI（Groq）で動きます。
+
 | | 通常版（このディレクトリ） | [公開版（`public-edition/`）](public-edition/README.md) |
 |---|---|---|
 | 使う人 | 自分（PC、同じ Wi-Fi のスマホ） | 合言葉を知っている人（公開URLでどこからでも） |

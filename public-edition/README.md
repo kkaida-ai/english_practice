@@ -12,29 +12,93 @@
 | 公開 | 同じ Wi-Fi のスマホ（自己署名証明書） | **公開URL**（正式な証明書・どこからでも） |
 | 利用制限 | なし | **合言葉ログイン・回数制限・総当たり対策** |
 
-## 使い方
+**Claude Pro などの有料プランは不要**です（会話AIは既定で Groq の無料枠を使います。カード登録も不要）。
+
+## 使い方は2通り
+
+| | A. URL で参加する | B. 自分の Mac で動かす |
+|---|---|---|
+| こんな人に | 管理者から URL と合言葉をもらった人 | 自分で好きな時に使いたい人 |
+| インストール | **不要**（スマホ・PC のブラウザだけ） | 必要（下の手順・30分ほど） |
+| 使える時間 | 管理者の PC が起動している間だけ | いつでも |
+| 必要なもの | Chrome / Safari / Edge、マイク | Apple シリコンの Mac、Groq の無料キー |
+
+### A. URL で参加する（インストール不要）
+
+1. 管理者から **URL（https://〜.trycloudflare.com）** と **合言葉** を受け取る
+2. URL をブラウザで開き、合言葉を入力して「はじめる」
+3. マイクの使用を許可する（聞かれたら「許可」）
+4. マイクボタンを押して英語で話しかける（キーボード入力もできます）
+
+- スマホではホーム画面に追加するとアプリのように使えます（iPhone: 共有 → ホーム画面に追加）
+- URL は管理者がアプリを起動し直すたびに変わります。開けなくなったら管理者に新しい URL を聞いてください
+- 単語帳・学習記録は使っている端末のブラウザにだけ保存されます
+
+### B. 自分の Mac で動かす
+
+Apple シリコン（M1 以降）の Mac 向けの手順です。ターミナル（アプリケーション → ユーティリティ）で順に実行します。
+
+**1. 道具を入れる**（[Homebrew](https://brew.sh/ja/) が未導入なら先に入れる）
 
 ```bash
-cd public-edition
-npm install
-cp .env.example .env      # GROQ_API_KEY を設定（下記）
-npm run public            # 公開URL・QRコード・合言葉が表示される
+brew install node python@3.12 ffmpeg cloudflared espeak-ng
 ```
 
-- 表示された **公開URL（https://〜.trycloudflare.com）** をスマホで開き、**合言葉**を入力
-- URL は起動するたびに変わります。**このPCで `npm run public` を動かしている間だけ**使えます（止めるには Ctrl+C）
-- 公開せずこのPCだけで使うなら `npm start`（http://localhost:3000）
+| もの | 用途 |
+|---|---|
+| node（20.12 以上） | アプリ本体 |
+| python@3.12 | リリーたちの声（Kokoro）と音声認識（Whisper）。Kokoro は Python 3.10〜3.12 で動きます |
+| ffmpeg | 音声認識で録音を読み込む（**必須**） |
+| cloudflared | 公開URL（`npm run public` のときだけ。Cloudflare のアカウント不要） |
+| espeak-ng | 任意：辞書にない単語の発音を補う |
 
-### 必要なもの
+**2. アプリを入手する**
 
-| もの | 用途 | 入れ方 |
-|---|---|---|
-| Groq の API キー（無料・カード不要） | 会話AI（と予備の音声認識） | https://console.groq.com/keys で発行して `.env` の `GROQ_API_KEY` に |
-| cloudflared | 公開URL | `brew install cloudflared`（Cloudflare のアカウント不要） |
-| VOICEVOX エンジン | ずんだもんの声 | 通常版の README を参照（自動で起動します） |
-| Python + kokoro / mlx-whisper | リリーたちの声・音声認識 | `pip install kokoro soundfile mlx-whisper`（自動で起動します） |
+```bash
+git clone https://github.com/kkaida-ai/english_practice.git
+cd english_practice/public-edition
+npm install
+```
 
-Groq のキーがない場合は PC 内の Ollama で動きますが、**日本語訳やカナ読みの質が大きく下がり、1往復30秒以上かかります**。公開するなら Groq のキーを設定してください。
+（git を使わない場合は GitHub の「Code → Download ZIP」で入手して展開し、`public-edition` フォルダに移動）
+
+**3. 声と音声認識のエンジンを入れる**
+
+```bash
+python3.12 -m venv .venv
+.venv/bin/pip install kokoro soundfile mlx-whisper
+```
+
+**4. 会話AI の無料キーを設定する**
+
+1. https://console.groq.com/keys を開き、Google アカウントなどでログイン → 「Create API Key」
+2. 表示されたキー（`gsk_` で始まる）をコピー
+3. 設定ファイルを作ってキーを書き込む
+
+```bash
+cp .env.example .env
+open -e .env        # GROQ_API_KEY= の後ろにキーを貼り付けて保存
+echo "EIKAIWA_PYTHON=$PWD/.venv/bin/python" >> .env
+```
+
+キーは他の人に見せないでください（`.env` は Git に含まれません）。
+
+**5. ずんだもんの声（VOICEVOX）を入れる**
+
+[VOICEVOX 公式サイト](https://voicevox.hiroshiba.jp/)から Mac 版をダウンロードし、`VOICEVOX.app` を「アプリケーション」フォルダに入れます。アプリ起動時に自動で見つけて使います（VOICEVOX を開いておく必要はありません）。
+
+**6. 起動する**
+
+```bash
+npm start            # この Mac だけで使う → ブラウザで http://localhost:3000
+npm run public       # 公開URL・QRコード・合言葉を表示（スマホや友達も使える）
+```
+
+- 初回は音声モデル（約2GB）のダウンロードで数分かかります
+- 起動時の表示で「ずんだもん: OK」「Kokoro: OK」「音声認識: OK」を確認してください
+- URL は起動するたびに変わります。**この Mac で動かしている間だけ**使えます（止めるには Ctrl+C）
+
+Groq のキーがない場合は PC 内の Ollama で動きますが、**日本語訳やカナ読みの質が大きく下がり、1往復30秒以上かかります**。Groq のキーを設定してください。
 
 ## 会話AI の選び方（`.env` の `LLM_PROVIDER`）
 
